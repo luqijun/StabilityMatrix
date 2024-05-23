@@ -183,6 +183,9 @@ public class InferenceTextToImageViewModel : InferenceGenerationViewModelBase, I
         CancellationToken cancellationToken
     )
     {
+        // Translate
+        await PromptCardViewModel.TranslateText();
+
         // Validate the prompts
         if (!await PromptCardViewModel.ValidatePrompts())
             return;

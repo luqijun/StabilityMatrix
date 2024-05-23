@@ -8,6 +8,7 @@ using AvaloniaEdit.Document;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StabilityMatrix.Avalonia.Controls;
+using StabilityMatrix.Avalonia.Helpers;
 using StabilityMatrix.Avalonia.Languages;
 using StabilityMatrix.Avalonia.Models;
 using StabilityMatrix.Avalonia.Models.Inference;
@@ -33,6 +34,11 @@ public partial class PromptCardViewModel : LoadableViewModelBase, IParametersLoa
     private readonly IModelIndexService modelIndexService;
     private readonly ISettingsManager settingsManager;
 
+    private readonly BaiduTranslationHelper _translator = new BaiduTranslationHelper(
+        "20240523002059642",
+        "YJS39Mv1alTuhN_xgeYD"
+    );
+
     /// <summary>
     /// Cache of prompt text to tokenized Prompt
     /// </summary>
@@ -42,7 +48,9 @@ public partial class PromptCardViewModel : LoadableViewModelBase, IParametersLoa
     public ITokenizerProvider TokenizerProvider { get; }
     public SharedState SharedState { get; }
 
+    public TextDocument PromptDocumentUI { get; } = new();
     public TextDocument PromptDocument { get; } = new();
+    public TextDocument NegativePromptDocumentUI { get; } = new();
     public TextDocument NegativePromptDocument { get; } = new();
 
     public StackEditableCardViewModel ModulesCardViewModel { get; }
@@ -81,6 +89,15 @@ public partial class PromptCardViewModel : LoadableViewModelBase, IParametersLoa
             settings => settings.IsPromptCompletionEnabled,
             true
         );
+
+        this.PromptDocumentUI.TextChanged += (sender, args) =>
+        {
+            this.PromptDocument.Text = this.PromptDocumentUI.Text;
+        };
+        this.NegativePromptDocumentUI.TextChanged += (sender, args) =>
+        {
+            this.NegativePromptDocument.Text = this.NegativePromptDocumentUI.Text;
+        };
     }
 
     partial void OnIsHelpButtonTeachingTipOpenChanging(bool oldValue, bool newValue)
@@ -407,5 +424,27 @@ public partial class PromptCardViewModel : LoadableViewModelBase, IParametersLoa
             PositivePrompt = PromptDocument.Text,
             NegativePrompt = NegativePromptDocument.Text
         };
+    }
+
+    public async Task TranslateText()
+    {
+        BaiduTranslationHelper translator = new BaiduTranslationHelper(
+            "20240523002059642",
+            "YJS39Mv1alTuhN_xgeYD"
+        );
+        var pos_text = await GetTanslatedText(this.PromptDocumentUI.Text);
+        var neg_text = await GetTanslatedText(this.NegativePromptDocumentUI.Text);
+        this.PromptDocument.Text = pos_text;
+        this.NegativePromptDocument.Text = neg_text;
+    }
+
+    public async Task<string> GetTanslatedText(string text)
+    {
+        BaiduTranslationHelper translator = new BaiduTranslationHelper(
+            "20240523002059642",
+            "YJS39Mv1alTuhN_xgeYD"
+        );
+        var res = await _translator.GetTranslation(text);
+        return res.trans_result == null ? "" : res.trans_result[0].dst;
     }
 }

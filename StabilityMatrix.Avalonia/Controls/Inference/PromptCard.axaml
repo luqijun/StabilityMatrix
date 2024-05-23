@@ -93,7 +93,7 @@
 
                                 <avaloniaEdit:TextEditor
                                     x:Name="PromptEditor"
-                                    Document="{Binding PromptDocument}"
+                                    Document="{Binding PromptDocumentUI}"
                                     FontFamily="Cascadia Code,Consolas,Menlo,Monospace">
                                     <i:Interaction.Behaviors>
                                         <behaviors:TextEditorCompletionBehavior
@@ -133,7 +133,7 @@
 
                                 <avaloniaEdit:TextEditor
                                     x:Name="NegativePromptEditor"
-                                    Document="{Binding NegativePromptDocument}"
+                                    Document="{Binding NegativePromptDocumentUI}"
                                     FontFamily="Cascadia Code,Consolas,Menlo,Monospace">
                                     <i:Interaction.Behaviors>
                                         <behaviors:TextEditorCompletionBehavior

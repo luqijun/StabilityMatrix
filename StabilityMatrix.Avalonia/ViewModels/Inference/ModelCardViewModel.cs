@@ -28,7 +28,7 @@ public partial class ModelCardViewModel(IInferenceClientManager clientManager)
         IComfyStep
 {
     [ObservableProperty]
-    private HybridModelFile? selectedModel;
+    private HybridModelFile? selectedModel = clientManager.Models.FirstOrDefault();
 
     [ObservableProperty]
     private bool isRefinerSelectionEnabled;
